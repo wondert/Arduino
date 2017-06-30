@@ -8,12 +8,15 @@ light sequence will include flashing green to warn of change to red, and time fo
 #include "Arduino.h"
 
 // define pin names
+#define LED_BUILTIN 13
 #define northsensor 12   // set pin 13 as sensor for southbound traffic. simulated using switch.
-#define southsensor 11   // set pin 12 as sensor for northbound traffic. simulated using switch.
-#define northgreen 8   // set pin 8 as output for Green LED on North side.
-#define northred 9   // set pin 9 as output for Red LED on North side.
+#define southsensor 3   // set pin 3 as sensor for northbound traffic. simulated using switch.
+#define northgreen 7   // set pin 7 as output for Green LED on North side.
+#define northred 6   // set pin 6 as output for Red LED on North side.
 #define southgreen 5   // set pin 5 as output for Green LED on South side.
-#define southred 6   // set pin 6 as output for Red LED on South side.
+#define southred 4   // set pin 4 as output for Red LED on South side.
+int valnorth = 0;   // set default value for north input sensor
+int valsouth = 0;   // set default value for south input sensor
 
 // define pin states. each pin will act as a sensor or LED source only.
 void setup() {
@@ -23,6 +26,7 @@ void setup() {
   pinMode(northred, OUTPUT);
   pinMode(southgreen, OUTPUT);
   pinMode(southred, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 // lightlogic defines the sequence of LED changes when a sensor switch is triggered.
@@ -79,13 +83,28 @@ void loop() {
   digitalWrite(southgreen, HIGH);
   digitalWrite(southred, LOW);
 
+  // Provide three second blink warning before sensor reads.
+  for (int j = 0; j < 3; j++) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+  }
+
+  // read switch states.
+  valnorth = digitalRead(northsensor);
+  valsouth = digitalRead(southsensor);
+
   // Prevent both lights from being Green at the same time.
-  if ((digitalRead(northsensor) == HIGH) && digitalRead(southsensor) == HIGH) {
+  if ((valnorth == HIGH) && (valsouth == HIGH)) {
     lightlogic();
+    digitalWrite(LED_BUILTIN, LOW);
   }
 
   // Prevent both lights from being Red at same time.
-  if ((digitalRead(northsensor) == HIGH) && (digitalRead(southsensor) == LOW)) {
+  if ((valnorth == HIGH) && (valsouth == LOW)) {
     lightlogic();
+    digitalWrite(LED_BUILTIN, LOW);
   }
+  delay(2000);
 }
