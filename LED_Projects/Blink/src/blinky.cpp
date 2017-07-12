@@ -3,6 +3,7 @@
  *
  * Turns on an LED on for one second,
  * then off for one second, repeatedly.
+ * Can use this program to test output of any Digital Pin.
  */
 
 // Need to use include and import Arduino.h library since writting in C++
