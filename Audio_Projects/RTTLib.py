@@ -17,7 +17,6 @@ def duration_function(duration_default, note):
 
     func(int, string) -> int
     """
-
     # create list to compare standard durations
     note_durations = ['2', '4', '8', '16', '32', '64']
 
@@ -47,7 +46,6 @@ def scale_function(note):
 
     func(string) -> string
     """
-
     # create list to compare scales
     note_scale = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
@@ -76,7 +74,6 @@ def octave_function(octave_default, note):
 
     func (int, string) -> string
     """
-
     # create empty string to collect potential octave elements
     octave_region = ''
 
@@ -128,7 +125,6 @@ def RTTLconv(duration, octave, melody):
 
     func(int, int, raw string) -> list[string, string]
     '''
-
     # split raw string into list of invididual notes
     notes = RTTLnotes(melody)
 
@@ -235,7 +231,6 @@ class RTTL():
     be converted into Arduion tone library compatible data objects encoding
     the proper scale and note durations.
     """
-
     def __init__(self, rttlr, duration=0, octave=0):
         """Creates an instance of RTTL class.
 
@@ -245,7 +240,7 @@ class RTTL():
         :param rttlr: represents the RTTL melody.
         :type rttlr: raw string
         :param duration: (optional) default note duration.
-        :type duration: int, default = 0
+        :type duration: int, default=0
         :param octave: (optional) default octave.
         :type octave: int, default=0.
         """
