@@ -8,8 +8,7 @@
 
 #include "Arduino.h"
 
-float temp;         // Creates variable of float type to capture analog voltage from LM35 sensor
-float faren;
+int tempData;         // Creates variable of int type to capture temperature from LM35 sensor (it converts value onboard!!!)
 int tempPin = 0;    // Sets analog input pin to A0
 
 void setup() {
@@ -17,14 +16,10 @@ void setup() {
 }
 
 void loop() {
-   temp = analogRead(tempPin);
-   // read analog volt from sensor and save to variable temp
-   temp = temp * 0.48828125;
-   // convert the analog volt to its temperature equivalent
-   faren = (temp * 1.8) + 32;
+   tempData = analogRead(tempPin);
    Serial.print("TEMPERATURE = ");
-   Serial.print(faren); // display temperature value to serial monitor
+   Serial.print(tempData); // display temperature value to serial monitor
    Serial.print("*F");
    Serial.println();
-   delay(5000); // update sensor reading each one second
+   delay(1000); // update sensor reading each one second
 }
