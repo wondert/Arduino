@@ -42,7 +42,7 @@ void setup() {
   /* Set a local name for the BLE device
      This name will appear in advertising packets
      and can be used by remote devices to identify this BLE device
-     The name can be changed but maybe be truncated based on space left in advertisement packet
+     The name can be changed but may be truncated based on space left in advertisement packet
   */
   blePeripheral.setLocalName("TemperatureSketch");
   blePeripheral.setAdvertisedServiceUuid(heartRateService.uuid());  // add the service UUID

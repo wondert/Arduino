@@ -22,7 +22,7 @@
 #include "Arduino.h"
 
 int temp;           // Creates variable of int type to capture temperature from LM35 sensor (it converts value onboard!!!)
-int tempPin = 1;    // Sets analog input pin to A1
+const int tempPin = 1;    // Sets analog input pin to A1
 
 // initialize LiquidCrystal library
 // setup pins for arduino shield
