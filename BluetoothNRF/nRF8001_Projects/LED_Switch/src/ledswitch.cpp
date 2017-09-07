@@ -3,7 +3,7 @@ example ledswitch.ino from MakeBluetooth uses the #define preprocessor macro.
 this creates undefined behavior, since the function BLEPeripheral has parameters
 with type unsigned char. The #define text replacement works here, but it acts as
 'magic', since the behavior for an unsigned char of '10' is undefined. The char
-is only 1 byte, and valid ASCII only goes 0-9 for 7-bit unsigned char.
+is only 1 byte, and valid ASCII only goes 0-9 for 8-bit unsigned char.
 If it were to accept unsigned char req [] that would be fine, since '10' can be
 represented as an array ['1','0'].
 
