@@ -1,11 +1,10 @@
 /*
-example ledswitch.ino from MakeBluetooth uses the #define preprocessor macro.
-this creates undefined behavior, since the function BLEPeripheral has parameters
-with type unsigned char. The #define text replacement works here, but it acts as
-'magic', since the behavior for an unsigned char of '10' is undefined. The char
-is only 1 byte, and valid ASCII only goes 0-9 for 8-bit unsigned char.
-If it were to accept unsigned char req [] that would be fine, since '10' can be
-represented as an array ['1','0'].
+the #define preprocessor macro creates undefined behavior...
+the function BLEPeripheral has parameters with type unsigned char. The #define
+text replacement works here, but it acts as 'magic', since the behavior for an
+unsigned char of '10' is undefined. The char is only 1 byte, and valid ASCII
+only goes 0-9 for 8-bit unsigned char. If it were to accept unsigned char req []
+that would be fine, since '10' can be represented as an array ['1','0'].
 
 Since BLEPeripheral will take values for the pins it connects to:
 BLEPeripheral(unsigned char req, optional unsigned char rdy, optional unsigned char rst)
@@ -17,6 +16,8 @@ const unsigned int BLE_RDY = 2;
 const unsigned int BLE_RST = 9;
 
 How does this even work with define 10....these params are pin numbers...C is wierd :(
+BLEPeripheral must have an overloaded constructor that accepts an int and converts
+to char implicitly...ewww 
 */
 #include <SPI.h>
 #include <BLEPeripheral.h>
