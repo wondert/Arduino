@@ -1,3 +1,5 @@
+/*global cordova, ble, deviceListScreen, unlockScreen, scrim, statusDiv, deviceList, refreshButton, disconnectButton*/
+
 // define UUIDs for Bluetooth service
 var SERVICE_UUID = 'D270';
 var UNLOCK_UUID = 'D271';
@@ -21,6 +23,8 @@ function bytesToString(buffer) {
 
 // application logic contained in app variable (looks like a class to me...)
 var app = {
+    // application setup
+
     // initialize calls bindEvents and hides the div pages of the app. starts up the app.
     initialize: function() {
         this.bindEvents();
@@ -30,23 +34,24 @@ var app = {
     // connects HTML DOM (actual pages) to applications javascript code. only called once.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        refreshButton.ontouchstart = this.scan;
-        deviceList.ontouchstart = this.connect;
         document.forms[0].addEventListener('submit', this.unlock, false);
-        disconnectButton.onclick = this.disconnect;
     },
     // when called, will scan for peripheral bluetooth devices
     onDeviceReady: function() {
+        deviceList.ontouchstart = app.connect;
+        refreshButton.ontouchstart = app.scan;
+        disconnectButton.onclick = app.disconnect;
         app.scan();
     },
     // clears all previous devices, runs the scrim div page, and scans/connects to select bluetooth services
     scan: function(e) {
         // clear device list
         deviceList.innerHTML = "";
-        app.showProgressIndicator("Scanning for Bluetooth Devices...");
 
         // scans for peripheral bluetooth devices, but discovery is limited to devices advertising the SERVICE_UUID
         // if successful runs onDeviceDiscovered, else runs inline function
+        app.showProgressIndicator("Scanning for Bluetooth Devices...");
+
         ble.startScan([SERVICE_UUID],
             app.onDeviceDiscovered,
             function() { alert("Listing Bluetooth Devices Failed"); }
@@ -54,7 +59,6 @@ var app = {
 
         // stop scan after 5 seconds, calls onScanComplete if ble.stopScan runs successfully 
         setTimeout(ble.stopScan, 5000, app.onScanComplete);
-
     },
     // recieves JSON object representing peripheral object, makes deviceListPage visible, builds + adds new elements to device list 
     onDeviceDiscovered: function(device) {
@@ -73,12 +77,13 @@ var app = {
         listItem.innerHTML = device.name + "<br />" + rssi + device.id;
         deviceList.appendChild(listItem);
 
-        var deviceListLength = deviceList.getElementsByTag('li').length;
-        app.setStatus("Found " + deviceListLength + " device" + (deviceListLength === 1 ? "." : "s."));
+        var deviceListLength = deviceList.getElementsByTagName('li').length;
+        app.setStatus("Found " + deviceListLength +
+                      " device" + (deviceListLength === 1 ? "." : "s."));
     },
     // shows peripheral devices connected after app.scan completes successfully. notify users if no peripherals found. 
     onScanComplete: function() {
-        var deviceListLength = deviceList.getElementsByTag('li').length;
+        var deviceListLength = deviceList.getElementsByTagName('li').length;
         if (deviceListLength === 0) {
             app.showDeviceListScreen();
             app.setStatus("No Bluetooth Peripherals Discovered.");
@@ -95,7 +100,7 @@ var app = {
         app.connectedPeripheral = peripheral;
         app.showUnlockScreen();
         app.setStatus("Connected");
-        ble.startNotification(peripheral.id, SERVICE_UUID, MESSAGE_UUID, app.onData);
+        ble.notify(peripheral.id, SERVICE_UUID, MESSAGE_UUID, app.onData);
     },
     // called if ble.connect fails, usually when the application unexpectedly disconnects. 
     onDisconnect: function(reason) {
@@ -125,20 +130,24 @@ var app = {
         app.setStatus(message);
         app.hideProgressIndicator();
     },
+    // application logic 
+    
     // called whenever user submits the form with a valid unlock code.
     unlock: function(e) {
-        // capture submitted code. check if empty submission.
+        // capture user submitted code before submitting form.
         var code = e.target.code.value;
         e.preventDefault();
 
+        // check if empty submission.
         if (code === "") { return;}
         app.showProgressIndicator();
 
-        // if ble.write succeeds, clear input from application/html form. else 
+        // if ble.write succeeds, clear input from application/html form.  
         function success() {
             e.target.code.value = "";
         }
 
+        // if ble.write fails, alert user
         function failure(reason) {
             alert("Error sending code" + reason);
             app.hideProgressIndicator();
@@ -153,6 +162,8 @@ var app = {
             success, failure
         );
     },
+    // User-Interface
+
     // UI: takes optional message and overlays the progress scrim on top of the user interface 
     showProgressIndicator: function(message) {
         if (!message) { message = "Processing"; }
